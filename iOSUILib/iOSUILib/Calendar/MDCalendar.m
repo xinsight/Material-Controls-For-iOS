@@ -538,7 +538,7 @@
                           scrollPosition:UICollectionViewScrollPositionNone];
 }
 
-#pragma MDCalendarDateHeaderDelegate
+#pragma mark MDCalendarDateHeaderDelegate
 - (void)didSelectCalendar {
   self.collectionView.hidden = NO;
   self.yearSelector.hidden = YES;
@@ -551,7 +551,7 @@
       _selectedDate ? [_selectedDate mdYear] : [_currentDate mdYear];
 }
 
-#pragma MDCalendarYearSelectorDelegate
+#pragma mark MDCalendarYearSelectorDelegate
 - (void)calendarYearDidSelected:(NSInteger)year {
   if (!_selectedDate)
     _selectedDate = _currentDate;

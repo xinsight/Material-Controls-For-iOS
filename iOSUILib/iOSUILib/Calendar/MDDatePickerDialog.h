@@ -25,9 +25,7 @@
 #import <UIKit/UIKit.h>
 
 @protocol MDDatePickerDialogDelegate <NSObject>
-
 - (void)datePickerDialogDidSelectDate:(nonnull NSDate *)date;
-
 @end
 
 @class MDButton;
@@ -38,5 +36,9 @@
 
 - (void)show;
 - (void)setTitleOk: (nonnull NSString *) okTitle andTitleCancel: (nonnull NSString *) cancelTitle;
+
+/// alternate way to set the date. expected format: yyyy-mm-dd
+- (void)setSelectedDateString:(nonnull NSString*)dateString;
+
 @end
 #endif

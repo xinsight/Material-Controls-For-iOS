@@ -35,7 +35,6 @@
 
 @interface MDDatePickerDialog ()
 @property(strong, nonatomic) UIFont *buttonFont UI_APPEARANCE_SELECTOR;
-@property(nonatomic) NSDateFormatter *dateFormatter;
 @property(nonatomic) MDCalendarDateHeader *header;
 @property(nonatomic) MDCalendar *calendar;
 
@@ -98,9 +97,7 @@
       
       
     [buttonOk setTitleColor:[UIColor blueColor] forState:normal];
-    [buttonOk addTarget:self
-                  action:@selector(didSelected)
-        forControlEvents:UIControlEventTouchUpInside];
+    [buttonOk addTarget:self action:@selector(doOK:) forControlEvents:UIControlEventTouchUpInside];
     [buttonOk.titleLabel setFont:_buttonFont];
     [popupHolder addSubview:buttonOk];
     self.buttonOk = buttonOk;
@@ -113,30 +110,23 @@
                           kCalendarActionBarHeight * 3.0 / 4.0)
                  type:MDButtonTypeFlat
           rippleColor:nil];
-    [buttonCancel setTitleColor:[UIColor blueColor] forState:normal];
-    [buttonCancel addTarget:self
-                     action:@selector(didCancelled)
-           forControlEvents:UIControlEventTouchUpInside];
+    [buttonCancel setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [buttonCancel addTarget:self action:@selector(doCancel:) forControlEvents:UIControlEventTouchUpInside];
     [buttonCancel.titleLabel setFont:_buttonFont];
     [popupHolder addSubview:buttonCancel];
     self.buttonCancel = buttonCancel;
 
-    [self setTitleOk:@"OK" andTitleCancel:@"CANCEL"];
+    [self setTitleOk:NSLocalizedString(@"OK", @"") andTitleCancel:NSLocalizedString(@"CANCEL", @"")];
       
-    [self.buttonCancel
-        setTitleColor:self.calendar.titleColors[@(MDCalendarCellStateButton)]
-             forState:UIControlStateNormal];
-    [self.buttonOk
-        setTitleColor:self.calendar.titleColors[@(MDCalendarCellStateButton)]
-             forState:UIControlStateNormal];
-    [self addTarget:self
-                  action:@selector(btnClick:)
-        forControlEvents:UIControlEventTouchUpInside];
+    UIColor *color = self.calendar.titleColors[@(MDCalendarCellStateButton)];
+    [self.buttonCancel setTitleColor:color forState:UIControlStateNormal];
+    [self.buttonOk setTitleColor:color forState:UIControlStateNormal];
+    [self addTarget:self action:@selector(doRemove:) forControlEvents:UIControlEventTouchUpInside];
 
-    [self
-        setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.5]];
+    [self setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.5]];
 
     [self addSubview:popupHolder];
+      
     [[NSNotificationCenter defaultCenter]
         addObserver:self
            selector:@selector(deviceOrientationDidChange:)
@@ -164,14 +154,23 @@
     [_buttonCancel setTitle:_cancelTitle forState:normal];
 }
 
+- (void) setSelectedDateString:(NSString *)dateString;
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd";
+    NSDate *date = [dateFormatter dateFromString:dateString];
+    self.selectedDate = date;
+}
+
 - (void)addSelfToMainWindow {
   UIView *view = [MDDeviceHelper getMainView];
   [self setFrame:view.bounds];
   [view addSubview:self];
 }
 
-- (void)btnClick:(id)sender {
-  self.hidden = YES;
+- (void)doRemove:(id)sender;
+{
+    [self removeFromSuperview];
 }
 
 - (void)layoutSubviews {
@@ -240,24 +239,15 @@
 
 - (void)show {
   [self addSelfToMainWindow];
-  self.hidden = NO;
 }
 
-- (void)calendar:(MDCalendar *)calendar didSelectDate:(NSDate *)date {
-  _dateFormatter.dateFormat = @"dd-MM-yyyy";
+- (void)doOK:(id)sender {
+    [self.delegate datePickerDialogDidSelectDate:_calendar.selectedDate];
+    [self removeFromSuperview];
 }
 
-- (void)didSelected {
-  if (_delegate &&
-      [_delegate
-          respondsToSelector:@selector(datePickerDialogDidSelectDate:)]) {
-    [_delegate datePickerDialogDidSelectDate:_calendar.selectedDate];
-  }
-  self.hidden = YES;
-}
-
-- (void)didCancelled {
-  self.hidden = YES;
+- (void)doCancel:(id)sender {
+    [self removeFromSuperview];
 }
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification {

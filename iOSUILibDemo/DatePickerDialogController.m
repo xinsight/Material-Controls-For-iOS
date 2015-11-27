@@ -23,50 +23,40 @@
 #import "DatePickerDialogController.h"
 #import "iOSUILib/Calendar/NSDate+MDExtension.h"
 #import "iOSUILib/Calendar/MDDatePickerDialog.h"
+
 @interface DatePickerDialogController () <MDDatePickerDialogDelegate>
 @property(weak, nonatomic) IBOutlet UITextField *txtDate;
 @property(nonatomic) NSDateFormatter *dateFormatter;
-
-@property(nonatomic) MDDatePickerDialog *datePicker;
 @end
 
 @implementation DatePickerDialogController
 
 - (void)viewDidLoad {
-  [super viewDidLoad];
-
-  _dateFormatter = [[NSDateFormatter alloc] init];
-
-  self.title = @"MDDatePickerDialog";
-}
-
-- (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
-  // Dispose of any resources that can be recreated.
+    [super viewDidLoad];
+    
+    self.dateFormatter = [[NSDateFormatter alloc] init];
+    
+    self.title = @"MDDatePickerDialog";
 }
 
 - (IBAction)btnSelectDate:(id)sender {
-  if (!_datePicker) {
     NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
     dateComponents.year = 1980;
     dateComponents.month = 1;
     dateComponents.day = 1;
     NSDate *date = [[NSCalendar currentCalendar] dateFromComponents:dateComponents];
-      
+    
     MDDatePickerDialog *datePicker = [[MDDatePickerDialog alloc] init];
-    _datePicker = datePicker;
-    _datePicker.selectedDate = date;
-    _datePicker.delegate = self;
-  }
-  [_datePicker show];
+    // alternate way to set the date
+    // datePicker.selectedDateString = @"2014-01-31";
+    datePicker.selectedDate = date;
+    datePicker.delegate = self;
+    [datePicker show];
 }
-/* ;
- #pragma mark - Navigation
-*/
 
 - (void)datePickerDialogDidSelectDate:(NSDate *)date {
-  _dateFormatter.dateFormat = @"dd-MM-yyyy";
-  _txtDate.text = [_dateFormatter stringFromDate:date];
+    self.dateFormatter.dateFormat = @"dd-MM-yyyy";
+    self.txtDate.text = [self.dateFormatter stringFromDate:date];
 }
 
 @end
