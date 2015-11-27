@@ -83,9 +83,6 @@
 @implementation MDTimePickerDialog {
   UIView *popupHolder;
 
-  NSInteger currentHour;
-  NSInteger currentMinute;
-
   NSInteger preHourTag;
   NSInteger preMinuteTag;
 
@@ -110,8 +107,8 @@
   self = [super init];
   if (self) {
 
-    currentHour = (int)hour % 24;
-    currentMinute = (int)minute % 60;
+    self.currentHour = (int)hour % 24;
+    self.currentMinute = (int)minute % 60;
 
     [self initialize];
   }
@@ -155,8 +152,8 @@
 
 - (void)initDefaultTime {
   NSDate *currentDate = [NSDate date];
-  currentHour = (int)currentDate.mdHour;
-  currentMinute = (int)currentDate.mdMinute;
+  self.currentHour = (int)currentDate.mdHour;
+  self.currentMinute = (int)currentDate.mdMinute;
 
   NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
   [formatter setLocale:[NSLocale currentLocale]];
@@ -182,15 +179,15 @@
     _pickerClockMode = MDCalendarTimeMode12H;
 
     if (currentTimeModeStr == nil) {
-      if (currentHour < 12) {
+      if (self.currentHour < 12) {
         currentTimeModeStr = @"AM";
       } else {
         currentTimeModeStr = @"PM";
       }
     }
-    currentHour %= 12;
-    if (currentHour == 0)
-      currentHour = 12;
+    self.currentHour %= 12;
+    if (self.currentHour == 0)
+      self.currentHour = 12;
   }
 
   preHourTag = -1;
@@ -689,19 +686,19 @@
   [_clockHandView.layer addSublayer:_maskInvisibleIndexLayer];
 
   _clockHandView.transform =
-      CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(currentHour * 30));
+      CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(self.currentHour * 30));
   _clockHandView.backgroundColor = [UIColor clearColor];
   _clockHandView.translatesAutoresizingMaskIntoConstraints = NO;
 }
 
 - (void)updateHeaderView {
-  if (currentMinute == 60)
-    currentMinute = 0;
+  if (self.currentMinute == 60)
+    self.currentMinute = 0;
 
   if (_pickerClockMode == MDCalendarTimeMode12H) {
     NSMutableAttributedString *attString = [[NSMutableAttributedString alloc]
         initWithString:[NSString stringWithFormat:@":%02d %@",
-                                                  (int)currentMinute,
+                                                  (int)self.currentMinute,
                                                   currentTimeModeStr]];
 
     [attString addAttribute:NSForegroundColorAttributeName
@@ -718,10 +715,10 @@
     _headerLabelMinute.attributedText = attString;
   } else {
     _headerLabelMinute.text =
-        [NSString stringWithFormat:@":%02d", (int)currentMinute];
+        [NSString stringWithFormat:@":%02d", (int)self.currentMinute];
   }
 
-  _headerLabelHour.text = [NSString stringWithFormat:@"%02d", (int)currentHour];
+  _headerLabelHour.text = [NSString stringWithFormat:@"%02d", (int)self.currentHour];
 
   if (_clockHour.hidden == NO) {
     _maskInvisibleIndexLayer.hidden = YES;
@@ -732,7 +729,7 @@
     [_headerLabelMinute setTextColor:[_headerLabelMinute.textColor
                                          colorWithAlphaComponent:0.5]];
   } else {
-    if (currentMinute % 5 == 0) {
+    if (self.currentMinute % 5 == 0) {
       _maskInvisibleIndexLayer.hidden = YES;
       _maskVisibleIndexLayer.hidden = NO;
     } else {
@@ -757,13 +754,13 @@
              forState:UIControlStateNormal];
   }
 
-  [((UIButton *)[_clockHour viewWithTag:(currentHour + 110)])
+  [((UIButton *)[_clockHour viewWithTag:(self.currentHour + 110)])
       setTitleColor:_titleSelectedColor
            forState:UIControlStateNormal];
-  preHourTag = currentHour + 110;
-  if (currentMinute % 5 == 0) {
-    int tag = (int)(currentMinute == 0 ? (12 + 110 + 24)
-                                       : currentMinute / 5 + 110 + 24);
+  preHourTag = self.currentHour + 110;
+  if (self.currentMinute % 5 == 0) {
+    int tag = (int)(self.currentMinute == 0 ? (12 + 110 + 24)
+                                       : self.currentMinute / 5 + 110 + 24);
     preMinuteTag = tag;
     [((UIButton *)[_clockMinute viewWithTag:tag])
         setTitleColor:_titleSelectedColor
@@ -948,8 +945,8 @@
     float roundedUp = lroundf(minutesFloat);
     if (roundedUp == 60)
       roundedUp = 00;
-    currentMinute = roundedUp;
-    float angle = ((int)(currentMinute)) * 6;
+    self.currentMinute = roundedUp;
+    float angle = ((int)(self.currentMinute)) * 6;
     _clockHandView.transform =
         CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(angle));
   } else {
@@ -974,8 +971,8 @@
       }
     }
 
-    currentHour = (int)hours;
-    float angle = (currentHour % 12) * 30;
+    self.currentHour = (int)hours;
+    float angle = (self.currentHour % 12) * 30;
     _clockHandView.transform =
         CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(angle));
   }
@@ -1007,8 +1004,8 @@
     float roundedUp = lroundf(minutesFloat);
     if (roundedUp == 60)
       roundedUp = 00;
-    currentMinute = roundedUp;
-    angle = ((int)(currentMinute)) * 6;
+    self.currentMinute = roundedUp;
+    angle = ((int)(self.currentMinute)) * 6;
   } else {
     NSUInteger hours =
         (atan2f((translation.x - currentView.frame.size.height / 2),
@@ -1032,8 +1029,8 @@
       }
     }
 
-    currentHour = (int)hours;
-    angle = (currentHour % 12) * 30;
+    self.currentHour = (int)hours;
+    angle = (self.self.currentHour % 12) * 30;
   }
   [self rotateHand:_clockHandView rotationDegree:angle];
   [self updateHeaderView];
@@ -1042,13 +1039,17 @@
 - (void)timeClicked:(id)sender {
   UIButton *selectedButton = (UIButton *)sender;
 
-  int tag = (int)selectedButton.tag;
+  NSInteger tag = selectedButton.tag;
+  self.currentHour = tag - 110;
+}
+
+- (void) setCurrentHour:(NSInteger)currentHour;
+{
   CGFloat degreesToRotate;
   if (_clockHour.hidden == NO) {
-    currentHour = tag - 110;
-    degreesToRotate = (currentHour % 12) * 30;
+    degreesToRotate = (self.currentHour % 12) * 30;
     if (_pickerClockMode == MDCalendarTimeMode24H) {
-      if (currentHour > 12) {
+      if (self.currentHour > 12) {
         selectorCircleLayer.path = selectorCirclePath.CGPath;
       } else {
         selectorCircleLayer.path = selectorMinCirclePath.CGPath;
@@ -1061,17 +1062,17 @@
                forState:UIControlStateNormal];
     }
 
-    preHourTag = tag;
+    preHourTag = currentHour + 110;
   } else {
-    currentMinute = (tag - 110 - 24) * 5;
-    degreesToRotate = (currentMinute / 5) * 30;
+    self.currentMinute = (currentHour - 24) * 5;
+    degreesToRotate = (self.currentMinute / 5) * 30;
     if (preMinuteTag != -1) {
       [((UIButton *)[_clockMinute viewWithTag:preMinuteTag])
           setTitleColor:_titleColor
                forState:UIControlStateNormal];
     }
 
-    preMinuteTag = tag;
+    preMinuteTag = currentHour + 110;
   }
 
   [self rotateHand:_clockHandView rotationDegree:degreesToRotate];
@@ -1137,7 +1138,7 @@
                                          _clockHandView.transform =
                                              CGAffineTransformMakeRotation(
                                                  DEGREES_TO_RADIANS(
-                                                     currentHour * 30));
+                                                     self.currentHour * 30));
                                        }];
                     }];
               }];
@@ -1161,7 +1162,7 @@
         }];
 
     if (_pickerClockMode == MDCalendarTimeMode24H) {
-      if (currentHour > 12) {
+      if (self.currentHour > 12) {
         selectorCircleLayer.path = selectorCirclePath.CGPath;
       } else {
         selectorCircleLayer.path = selectorMinCirclePath.CGPath;
@@ -1202,7 +1203,7 @@
                                          _clockHandView.transform =
                                              CGAffineTransformMakeRotation(
                                                  DEGREES_TO_RADIANS(
-                                                     currentMinute / 5 * 30));
+                                                     self.currentMinute / 5 * 30));
                                        }];
 
                     }];
@@ -1262,17 +1263,17 @@
                                                      andMinute:)]) {
     if (_pickerClockMode == MDCalendarTimeMode24H) {
       [_delegate timePickerDialog:self
-                    didSelectHour:currentHour
-                        andMinute:currentMinute];
+                    didSelectHour:self.currentHour
+                        andMinute:self.currentMinute];
     } else {
       if ([currentTimeModeStr isEqualToString:@"AM"]) {
         [_delegate timePickerDialog:self
-                      didSelectHour:currentHour
-                          andMinute:currentMinute];
+                      didSelectHour:self.currentHour
+                          andMinute:self.currentMinute];
       } else {
         [_delegate timePickerDialog:self
-                      didSelectHour:(currentHour + 12) % 24
-                          andMinute:currentMinute];
+                      didSelectHour:(self.currentHour + 12) % 24
+                          andMinute:self.currentMinute];
       }
     }
   }

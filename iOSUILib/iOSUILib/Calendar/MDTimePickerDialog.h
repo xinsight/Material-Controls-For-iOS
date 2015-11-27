@@ -44,6 +44,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class MDButton;
 @interface MDTimePickerDialog : UIButton <UIGestureRecognizerDelegate>
 
+@property (nonatomic, assign) NSInteger currentHour;
+@property (nonatomic, assign) NSInteger currentMinute;
+
 @property(nonatomic, weak) id<MDTimePickerDialogDelegate> delegate;
 
 - (instancetype)initWithHour:(NSInteger)hour andWithMinute:(NSInteger)minute;
