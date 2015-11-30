@@ -32,6 +32,7 @@
 @interface MDDatePickerDialog : UIControl
 
 @property (nullable, strong, nonatomic) NSDate *selectedDate;
+@property (nonnull, strong, nonatomic) NSDate *minimumDate;
 @property(weak, nonatomic) id<MDDatePickerDialogDelegate> delegate;
 
 - (void)show;

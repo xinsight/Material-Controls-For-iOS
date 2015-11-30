@@ -43,13 +43,14 @@
     NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
     dateComponents.year = 1980;
     dateComponents.month = 1;
-    dateComponents.day = 1;
+    dateComponents.day = 5;
     NSDate *date = [[NSCalendar currentCalendar] dateFromComponents:dateComponents];
     
     MDDatePickerDialog *datePicker = [[MDDatePickerDialog alloc] init];
     // alternate way to set the date
     // datePicker.selectedDateString = @"2014-01-31";
     datePicker.selectedDate = date;
+    datePicker.minimumDate = date;
     datePicker.delegate = self;
     [datePicker show];
 }
