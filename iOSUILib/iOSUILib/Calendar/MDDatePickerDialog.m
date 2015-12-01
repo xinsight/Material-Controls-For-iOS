@@ -258,14 +258,6 @@
   self.calendar.minimumDate = minimumDate;
 }
 
-- (NSDate*)minimumDate {
-    return self.calendar.minimumDate;
-}
-
-- (void)setMinimumDate:(NSDate *)minimumDate {
-  self.calendar.minimumDate = minimumDate;
-}
-
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
   UIInterfaceOrientation orientation =
       [[UIApplication sharedApplication] statusBarOrientation];
