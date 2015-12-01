@@ -30,7 +30,6 @@
 
 #define kMDContentHorizontalPaddingIPad 24
 #define kMDContentHorizontalPaddingIPhone 12
-#define kMDTabBarHorizontalInset 8
 
 #pragma mark - MDTabBar
 
@@ -257,7 +256,7 @@
   }
 
   CGFloat holderWidth =
-      self.superview.bounds.size.width - kMDTabBarHorizontalInset * 2;
+      self.superview.bounds.size.width - tabBar.horizontalInset * 2;
   if (segmentedControlWidth < holderWidth) {
     if (self.numberOfSegments * maxItemSize < holderWidth) {
       maxItemSize = holderWidth / self.numberOfSegments;
@@ -437,8 +436,8 @@
 - (void)layoutSubviews {
   [super layoutSubviews];
   scrollView.frame = CGRectMake(0, 0, self.bounds.size.width, kMDTabBarHeight);
-  [scrollView setContentInset:UIEdgeInsetsMake(0, kMDTabBarHorizontalInset, 0,
-                                               kMDTabBarHorizontalInset)];
+  [scrollView setContentInset:UIEdgeInsetsMake(0, self.horizontalInset, 0,
+                                               self.horizontalInset)];
   [scrollView setContentSize:segmentedControl.bounds.size];
 }
 
@@ -500,14 +499,15 @@
 
 - (void)scrollToSelectedIndex {
   CGRect frame = [segmentedControl getSelectedSegmentFrame];
-  CGFloat contentOffset = frame.origin.x + kMDTabBarHorizontalInset -
+  CGFloat horizontalInset = self.horizontalInset;
+  CGFloat contentOffset = frame.origin.x + horizontalInset -
                           (self.frame.size.width - frame.size.width) / 2;
-  if (contentOffset > scrollView.contentSize.width + kMDTabBarHorizontalInset -
+  if (contentOffset > scrollView.contentSize.width + horizontalInset -
                           self.frame.size.width) {
-    contentOffset = scrollView.contentSize.width + kMDTabBarHorizontalInset -
+    contentOffset = scrollView.contentSize.width + horizontalInset -
                     self.frame.size.width;
-  } else if (contentOffset < -kMDTabBarHorizontalInset) {
-    contentOffset = -kMDTabBarHorizontalInset;
+  } else if (contentOffset < -horizontalInset) {
+    contentOffset = -horizontalInset;
   }
 
   [scrollView setContentOffset:CGPointMake(contentOffset, 0) animated:YES];
@@ -609,6 +609,12 @@
       [self scrollToSelectedIndex];
     }
   }
+}
+
+- (void) setHorizontalInset:(CGFloat)horizontalInset;
+{
+  _horizontalInset = horizontalInset;
+  [self setNeedsLayout];
 }
 
 - (NSInteger)numberOfItems {
