@@ -101,6 +101,8 @@
                                              metrics:nil
                                                views:viewsDictionary]];
   self.title = @"MDTabBarViewController";
+  
+  //tabBarViewController.tabBar.horizontalPaddingPerItem = 0; // FIXME:
 }
 
 - (void)didReceiveMemoryWarning {
